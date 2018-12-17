@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>饼状图</title>
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/highcharts.js"></script>
+<script>
+var json = getData();
+	$(function() {
+		$('#container').highcharts(json);
+	});
+	function getData(){
+		var json = {};
+	    json.chart = {
+			plotBackgroundColor : null,
+			plotBorderWidth : null,
+			plotShadow : false
+		};
+		json.title = {
+			text : '2014 年各浏览器市场占有比例'
+		};
+		json.tooltip = {
+			pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
+		};
+		json.plotOptions = {
+			pie : {
+				allowPointSelect : true,
+				cursor : 'pointer',
+				dataLabels : {
+					enabled : true,
+					format : '<b>{point.name}%</b>: {point.percentage:.1f} %',
+					style : {
+						color : (Highcharts.theme && Highcharts.theme.contrastTextColor)
+								|| 'black'
+					}
+				}
+			}
+		};
+		json.series = new Array();
+		json.series = [];
+		json.series[0] = {};
+		json.series[0].type = "pie";
+		json.series[0].name = "Browse share";
+		json.series[0].data = new Array();
+		$.post("phone.do", function(data) {
+			var jsonData = JSON.parse(data);
+			for (i = 0; i < jsonData.length; i++) {
+				json.series[0].data[i] = {};
+				json.series[0].data[i].one= jsonData[i].one;
+				json.series[0].data[i].pname= jsonData[i].pname;
+				json.series[0].data[i].sliced = true;
+				json.series[0].data[i].selected = true;
+			}
+			$('#container').highcharts(json);
+		});
+
+		return json;
+	}
+</script>
+</head>
+<body>
+<div id="container" style="width:550px;height:400px;margin: 0 auto;"></div>
+<div id="center" style="width:550px;height:400px;margin: 0 auto;"></div>
+</body>
+</html>
